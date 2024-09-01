@@ -1,0 +1,198 @@
+-- Create the customer table
+CREATE TABLE customer (
+    customer_id INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    email VARCHAR(100),
+    address VARCHAR(200),
+    city VARCHAR(50),
+    state VARCHAR(50),
+    zip VARCHAR(10)
+);
+-- Insert 5 records into the customer table
+INSERT INTO customer (customer_id, first_name, last_name, email, address, city, state, zip)
+VALUES
+    (101, 'Jatin', 'Dev', 'devj@outlook.com', '123 Main St', 'Anytown', 'CA', '12345'),
+    (102, 'Manasvi', 'Sachdeva', 'msachdeva@outlook.com', '456 Elm St', 'Anothercity', 'NY', '67890'),
+    (103, 'Garvit', 'Singh', 'garsin@hotmail.com', '789 Oak St', 'SanJose', 'CL', '95196'),
+    (104, 'Naithik', 'Iyer', 'iyern@gmail.com', '101 Pine St', 'Smalltown', 'OH', '98765'),
+    (105, 'Tanisha', 'Gill', 'tang@yahoo.com', '222 Maple St', 'Townsville', 'FL', '13579');
+
+-- Select only the ‘first_name’ and ‘last_name’ columns from the customer table.
+Select first_name ,last_name from customer
+
+-- Select those records where ‘first_name’ starts with “G” and city is ‘San Jose’.
+Select * from customer where first_name LIKE 'G%' AND city = 'San Jose';
+
+-- Select those records where Email has only ‘gmail’. 
+Select * from customer where Email like '%gmail%'
+
+--6. Select those records where the ‘last_name’ doesn't end with “A"
+Select * from customer where not  last_name  like '%a'
+
+
+--1. Create an ‘Orders’ table which comprises of these columns: ‘order_id’,‘order_date’, ‘amount’, ‘customer_id’. 
+Create Table Orders (
+Order_id  int primary key,
+Order_date date,
+Amount int,
+Customer_id int );
+
+--2. Insert 5 new records. 
+INSERT INTO Orders VALUES ('1000','2023-04-09','750','101')
+INSERT INTO Orders VALUES ('1001','2023-04-10','400','102')
+INSERT INTO Orders VALUES ('1002','2023-04-10','600','103')
+INSERT INTO Orders VALUES ('1003','2023-04-11','900','104')
+INSERT INTO Orders VALUES ('1004','2023-04-12','680','104')
+
+
+--3. Make an inner join on ‘Customer’ and ‘Orders’ tables on the ‘customer_id’ column. 
+Select * from 
+Customer as C inner join Orders as O
+on C.Customer_Id =O.Customer_id
+
+
+
+--4. Make left and right joins on ‘Customer’ and ‘Orders’ tables on the ‘customer_id’ column.
+Select * from 
+Customer as C left join Orders as O
+on C.Customer_Id =O.Customer_id
+
+Select * from 
+Customer as C right join Orders as O
+on C.Customer_Id =O.Customer_id
+
+
+--5. Make a full outer join on ‘Customer’ and ‘Orders’ table on the ‘customer_id’ column.
+Select * from 
+Customer as C full outer join Orders as O
+on C.Customer_Id =O.Customer_id
+
+--6. Update the ‘Orders’ table and set the amount to be 100 where ‘customer_id’ is 103
+Update Orders set Amount =100 where customer_id = 103
+
+
+--1. Use the inbuilt functions and find the minimum, maximum and average amount from the orders table
+Select Max(Amount) as MAX_AMOUNT from Orders
+Select Min(Amount) as MIN_AMOUNT from Orders
+Select Avg(Amount) as AVG_AMOUNT from Orders
+
+
+--2. Create a user-defined function which will multiply the given number with 10
+CREATE FUNCTION Product10 (@inputNumber INT)
+RETURNS INT
+AS
+BEGIN 
+DECLARE @result INT;
+SET @result = @inputNumber * 10;
+RETURN @result;
+END;
+
+--4. Using a case statement, find the status of the amount. Set the status of the amount as high amount, low amount or medium amount based upon the condition.
+Select *, Case 
+when Amount>=700 then 'High'
+when Amount>=500 then 'Medium'
+when Amount>=300 then 'Low'
+else 'Vey Low' end
+as Amount_Status 
+from Orders
+
+ 
+ --5. Create a user-defined function, to fetch the amount greater than then given input
+ CREATE FUNCTION Greater_Amount (@inputAmount int 
+Orders
+AS
+RETURN
+(SELECT * FROM Orders WHERE amount > @inputAmount);
+
+
+-- 1.Arrange the ‘Orders’ dataset in decreasing order of amount
+Select * from Orders order by Amount desc
+
+
+--2. Create a table with the name ‘Employee_details1’ consisting of these columns: ‘Emp_id’, ‘Emp_name’, ‘Emp_salary’. 
+--Create another table with the name ‘Employee_details2’ consisting of the same columns as the first table.
+
+Create Table Employee_details1 
+( Emp_ID int Primary Key,
+Emp_Name varchar(30),
+Emp_Salary int
+);
+
+Create Table Employee_details2 
+( Emp_ID int Primary Key,
+Emp_Name varchar(30),
+Emp_Salary int
+);
+
+Insert Into Employee_details1 Values 
+('1','Jitesh','5000') , 
+('2','Rahul','3000'),
+('3','Madhur','6000'),
+('4','Parth','4000'),
+('5','Zayn','2900'),
+('6','Yash','7000'),
+('7','Kunal','5500')
+
+Insert Into Employee_details2 Values 
+('11','Raghav','4500') , 
+('12','Nitin','7200'),
+('13','Mehul','2500'),
+('14','Yashi','8500'),
+('15','Tarun','7500'),
+('16','Vasu','3000'),
+('17','Kamya','5300'),
+('18','Sanya','7400'),
+('19','Yash','8000'),
+('20','Shreya','5600')
+
+Select * from Employee_details2
+
+--3. Apply the UNION operator on these two tables
+Select * from Employee_details1 union all Select * from Employee_details2
+
+--4. Apply the INTERSECT operator on these two tables
+Select * from Employee_details1  intersect Select * from Employee_details2
+
+--5. Apply the EXCEPT operator on these two table
+Select Emp_Name from Employee_details1  Except Select Emp_Name from Employee_details2
+
+
+--1. Create a view named ‘customer_san_jose’ which comprises of only those customers who are from San Jose
+Create view SANJOSE_CUSTOMERS
+As
+Select * from Customer where City = 'SanJose'
+
+Select * from SANJOSE_CUSTOMERS
+
+
+--2. Inside a transaction, update the first name of the customer to Francis where the last name is Sachdeva:
+--a. Rollback the transaction
+BEGIN TRANSACTION;
+
+UPDATE Customer
+SET first_name = 'Francis'
+WHERE last_name = 'Sachdeva';
+COMMIT;
+
+--b. Set the first name of customer to Alex, where the last name is Jordan
+BEGIN TRANSACTION;
+UPDATE Customer
+SET first_name = 'Alex'
+WHERE last_name = 'Gill';
+COMMIT;
+
+--3. Inside a TRY... CATCH block, divide 100 with 0, print the default error message.
+BEGIN TRY
+    DECLARE @result float;
+    SET @result = 100 / 0;
+END TRY
+BEGIN CATCH
+    PRINT ERROR_MESSAGE(); 
+END CATCH;
+
+--4. Create a transaction to insert a new record to Orders table and save it.
+BEGIN TRANSACTION;
+INSERT INTO Orders 
+VALUES ('134', '2023-04-13','5600','106')
+COMMIT;
